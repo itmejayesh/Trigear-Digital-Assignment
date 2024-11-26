@@ -1,16 +1,12 @@
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import { Button } from "./ui/button";
 
-const TodoFormInput = ({
-	onAddTodo,
-}: {
+const TodoFormInput: React.FC<{
 	onAddTodo: (value: string) => void;
-}) => {
-	const [inputValue, setInputValue] = useState<string>("");
+}> = memo(({ onAddTodo }) => {
+	const [inputValue, setInputValue] = useState("");
 
-	const handleInputValue = (value: string) => {
-		setInputValue(value);
-	};
+	const handleInputValue = (value: string) => setInputValue(value);
 
 	const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -25,7 +21,7 @@ const TodoFormInput = ({
 				id="add-task-form"
 				aria-label="Add Task"
 				className="flex items-center gap-2 mb-6">
-				<label htmlFor="task-input" className=" sr-only">
+				<label htmlFor="task-input" className="sr-only">
 					Add a new task:
 				</label>
 				<input
@@ -47,6 +43,6 @@ const TodoFormInput = ({
 			</form>
 		</section>
 	);
-};
+});
 
 export default TodoFormInput;

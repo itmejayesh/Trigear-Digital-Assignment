@@ -1,46 +1,55 @@
 import TodoTaskList from "./TodoTaskList";
 import TodoFormInput from "./TodoFormInput";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-const Todo = () => {
+const Todo: React.FC = () => {
 	const [todoTask, setTodoTask] = useState<
 		{ id: string; title: string; completed: boolean }[]
 	>([]);
 
-	const handleFormSubmit = (inputValue: string) => {
-		const trimmedInput = inputValue.trim();
+	const handleFormSubmit = useCallback(
+		(inputValue: string) => {
+			const trimmedInput = inputValue.trim();
 
-		if (!trimmedInput) return;
+			if (!trimmedInput) return;
 
-		if (todoTask.some((task) => task.title === trimmedInput)) {
-			return;
-		}
-
-		setTodoTask((prevTask) => [
-			...prevTask,
-			{ id: uuidv4(), title: trimmedInput, completed: false },
-		]);
-	};
-
-	const deleteTask = (id: string) => {
-		setTodoTask((prevTasks) => {
-			const updatedTasks = prevTasks.filter((val) => val.id !== id);
-
-			if (updatedTasks.length === 0) {
-				localStorage.removeItem("Todo-App");
+			if (todoTask.some((task) => task.title === trimmedInput)) {
+				return;
 			}
-			return updatedTasks;
-		});
-	};
 
-	const todoTaskCompletion = (id: string) => {
-		setTodoTask((prevTasks) =>
-			prevTasks.map((task) =>
-				task.id === id ? { ...task, completed: !task.completed } : task
-			)
-		);
-	};
+			setTodoTask((prevTask) => [
+				...prevTask,
+				{ id: uuidv4(), title: trimmedInput, completed: false },
+			]);
+		},
+		[todoTask, setTodoTask]
+	);
+
+	const deleteTask = useCallback(
+		(id: string) => {
+			setTodoTask((prevTasks) => {
+				const updatedTasks = prevTasks.filter((val) => val.id !== id);
+
+				if (updatedTasks.length === 0) {
+					localStorage.removeItem("Todo-App");
+				}
+				return updatedTasks;
+			});
+		},
+		[setTodoTask]
+	);
+
+	const todoTaskCompletion = useCallback(
+		(id: string) => {
+			setTodoTask((prevTasks) =>
+				prevTasks.map((task) =>
+					task.id === id ? { ...task, completed: !task.completed } : task
+				)
+			);
+		},
+		[setTodoTask]
+	);
 
 	useEffect(() => {
 		const storedTasks = localStorage.getItem("Todo-App");
